@@ -222,7 +222,7 @@ const gzip=async b=>new Response(new Blob([b]).stream().pipeThrough(new Compress
     try{await carregaCatalogo()}catch(x){bt.disabled=false;msg.className="msg";msg.textContent="Não foi possível abrir o catálogo. Recarregue a página e tente de novo.";return}
     $("#entrada").hidden=true;$("#app").hidden=false;
     $("#perfil").textContent=interno?"Perfil interno":"Perfil campo";
-    $("#addBtn").hidden=!interno;
+    $("#addBtn").hidden=!(interno&&TOKEN);
     render();
   });
 })();
@@ -296,8 +296,8 @@ function render(){
   const q=busca.trim().toLowerCase();
   const lista=itens.filter(v=>(filtro==="todos"||v.categoria===filtro)&&(!q||[v.titulo,v.descricao,v.palestrante,catNome(v.categoria)].join(" ").toLowerCase().includes(q)));
   const grupos=filtro==="todos"&&!q?CATS.map(c=>({c,itens:lista.filter(v=>v.categoria===c.id)})).filter(g=>g.itens.length):[{c:filtro==="todos"?{nome:"Resultados",desc:""}:CATS.find(c=>c.id===filtro),itens:lista}];
-  $("#list").innerHTML=grupos.length?grupos.map(g=>`<div class="section-h"><h2>${esc(g.c.nome)}</h2><p>${esc(g.c.desc||"")}</p></div><div class="grid">${g.itens.length?g.itens.map(card).join(""):(q?`<div class="empty"><strong>Nada encontrado</strong>Tente outro termo ou categoria.</div>`:`<div class="empty"><strong>Nenhum item nesta categoria ainda</strong>${interno?"Use “+ Adicionar” para incluir o primeiro.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div>`)}</div>`).join("")
-    :`<div class="grid" style="margin-top:22px"><div class="empty"><strong>O acervo ainda está vazio</strong>${interno?"Use “+ Adicionar” para incluir o primeiro item.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div></div>`;
+  $("#list").innerHTML=grupos.length?grupos.map(g=>`<div class="section-h"><h2>${esc(g.c.nome)}</h2><p>${esc(g.c.desc||"")}</p></div><div class="grid">${g.itens.length?g.itens.map(card).join(""):(q?`<div class="empty"><strong>Nada encontrado</strong>Tente outro termo ou categoria.</div>`:`<div class="empty"><strong>Nenhum item nesta categoria ainda</strong>${interno&&TOKEN?"Use “+ Adicionar” para incluir o primeiro.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div>`)}</div>`).join("")
+    :`<div class="grid" style="margin-top:22px"><div class="empty"><strong>O acervo ainda está vazio</strong>${interno&&TOKEN?"Use “+ Adicionar” para incluir o primeiro item.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div></div>`;
 }
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filtro=b.dataset.c;render()});
 $("#q").addEventListener("input",e=>{busca=e.target.value;render()});
@@ -322,7 +322,7 @@ function abrir(id){
     <h2 style="margin:0;font-size:24px;line-height:1.2">${esc(v.titulo)}</h2>
     <div class="meta" style="padding:0">${v.palestrante?`<span>${esc(v.palestrante)}</span>`:""}${v.data?`<span>${dataBR(v.data)}</span>`:""}${v.duracao?`<span>${esc(v.duracao)}</span>`:""}</div>
     ${v.descricao?`<p style="margin:0;white-space:pre-line">${esc(v.descricao)}</p>`:""}
-    <div class="row">${interno?`<button class="btn btn-line" id="ed">Editar</button><button class="btn btn-line" id="del">Remover</button>`:""}<button class="btn btn-green close" id="fx">Fechar</button></div>
+    <div class="row">${interno&&TOKEN?`<button class="btn btn-line" id="ed">Editar</button><button class="btn btn-line" id="del">Remover</button>`:""}<button class="btn btn-green close" id="fx">Fechar</button></div>
     <div id="confirm"></div></div>`;
   $("#dlg").hidden=false;$("#fx").focus();
   $("#fx").onclick=fechar;
@@ -333,7 +333,7 @@ function abrir(id){
   }}
   else if(P.length>1)playerContinuo(P,v.mime||"video/mp4");
   else if(P.length)urlParte(P[0],v.mime||"video/mp4").then(u=>{const el=$("#v1");if(el)el.outerHTML=`<video controls autoplay playsinline src="${u}"></video>`}).catch(()=>{const el=$("#v1");if(el)el.textContent="Não foi possível abrir o vídeo."});
-  if(interno){
+  if(interno&&TOKEN){
     $("#ed").onclick=()=>form(v);
     $("#del").onclick=()=>{$("#confirm").innerHTML=`<div class="row" style="background:var(--tint);padding:12px"><span>Remover “${esc(v.titulo)}” do acervo?</span><button class="btn btn-green" id="sim">Remover</button><button class="btn btn-line" id="nao">Cancelar</button></div>`;
       $("#nao").onclick=()=>$("#confirm").innerHTML="";
