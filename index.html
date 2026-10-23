@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Acervo da Aprosoja/MS com vídeos, manuais, ferramentas e planilhas da equipe. Acesso restrito, com login e senha.">
+<title>Acervo Aprosoja/MS</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Source+Sans+3:wght@300;400;600;700&display=swap">
+<style>
+/* Layout: tela de entrada; depois faixa verde de cabeçalho com barra dourada, trilho de categorias, grade de itens; player em painel sobreposto. */
+:root{
+  --verde:#00522e; --dourado:#c7a210; --bg:#ffffff; --tint:#f3f6f4; --ink:#1b2e22; --muted:#56645b; --rule:#d5ddd8;
+  --band:#00522e; --band-ink:#ffffff; --card:#ffffff; --accent-ink:#00522e; --overlay:rgba(27,46,34,.72); --erro:#b3261e;
+  --f-display:"Michroma","Good Times",sans-serif; --f-sans:"Whitney","Source Sans 3",system-ui,sans-serif;
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#122019; --tint:#1b2e22; --ink:#e8efe9; --muted:#a6b5ab; --rule:#2f4538; --band:#0b1a12; --card:#1b2e22; --accent-ink:#8fd1ad; --overlay:rgba(5,12,8,.8); --erro:#ff8a80; color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.5}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* entrada */
+.entrada{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));background:var(--tint)}
+.cartao{width:100%;max-width:420px;background:#fff;color:#1b2e22;border-top:6px solid var(--verde);box-shadow:0 18px 50px rgba(16,40,26,.14)}
+.cartao .in{padding:34px 32px 28px;display:flex;flex-direction:column;gap:14px}
+.cartao .logo-e{display:block;height:60px;width:auto;margin:0 auto 6px}
+.cartao h1{font-size:24px;margin:6px 0 0;line-height:1.2;color:#00522e}
+.cartao .sub{margin:0 0 6px;color:#56645b;font-size:15px}
+.cartao label{font-size:13px;font-weight:600;letter-spacing:.04em;color:#56645b;display:block;margin-bottom:5px}
+.cartao input{font:16px var(--f-sans);padding:11px 12px;border:1px solid #d5ddd8;width:100%;border-radius:0;background:#fff;color:#1b2e22}
+.senha-l{display:flex}
+.senha-l input{flex:1;min-width:0}
+.ver{font:600 13px var(--f-sans);border:1px solid #d5ddd8;border-left:0;background:#f3f6f4;color:#00522e;padding:0 12px;cursor:pointer}
+.cartao .btn{justify-content:center;width:100%;padding:13px}
+.msg{min-height:1.4em;margin:0;font-size:14px;color:#b3261e}
+.msg.ok{color:#00522e}
+.nota{font-size:12.5px;color:#56645b;margin:0;text-align:center}
+.entrada .rodape{font-size:13px;color:var(--muted);margin:0}
+
+/* acervo */
+header{background:var(--band);color:var(--band-ink);position:relative;overflow:hidden}
+header .wrap{padding-block:36px 40px;display:flex;gap:24px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+header::after{content:"";position:absolute;right:0;bottom:0;width:38%;height:8px;background:var(--dourado)}
+.sig{font-family:var(--f-display);font-size:12px;letter-spacing:.18em;opacity:.85;display:flex;align-items:center;gap:10px}
+.sig::before{content:"";width:14px;height:14px;background:var(--dourado)}
+header h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:700;margin:14px 0 8px;text-wrap:balance}
+.lede{max-width:60ch;margin:0;font-weight:300;font-size:17px;opacity:.92}
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:14px}
+.stats b{font-size:24px;font-weight:700;color:var(--dourado);font-variant-numeric:tabular-nums;margin-right:6px}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.perfil{font-size:12px;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:6px 10px}
+.btn{font:600 15px var(--f-sans);border:0;cursor:pointer;padding:11px 18px;border-radius:0;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+.btn:disabled{opacity:.6;cursor:default}
+.btn-gold{background:var(--dourado);color:#1b2e22}
+.btn-line{background:transparent;color:var(--accent-ink);box-shadow:inset 0 0 0 1.5px currentColor}
+.btn-ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
+.btn-green{background:var(--verde);color:#fff}
+.btn:focus-visible,.chip:focus-visible,.card:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.ver:focus-visible{outline:3px solid var(--dourado);outline-offset:2px}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-block:22px 6px;border-bottom:1px solid var(--rule)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 auto}
+.chip{font:600 14px var(--f-sans);background:transparent;color:var(--muted);border:1px solid var(--rule);padding:7px 12px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--verde);color:#fff;border-color:var(--verde)}
+.chip .n{font-variant-numeric:tabular-nums;opacity:.75;font-weight:400}
+.search{flex:0 1 280px;min-width:0;font:15px var(--f-sans);padding:9px 12px;border:1px solid var(--rule);background:var(--card);color:var(--ink)}
+.section-h{display:flex;align-items:baseline;gap:12px;margin:30px 0 14px;flex-wrap:wrap}
+.section-h h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);margin:0;display:flex;gap:10px;align-items:center}
+.section-h h2::before{content:"";width:10px;height:10px;background:var(--dourado)}
+.section-h p{margin:0;color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;padding-bottom:48px}
+.card{background:var(--card);border:1px solid var(--rule);cursor:pointer;display:flex;flex-direction:column;text-align:left;font:inherit;color:inherit;padding:0;min-width:0}
+.card:hover .cover::after{opacity:1}
+.cover{aspect-ratio:16/9;max-width:100%;position:relative;background:var(--verde);color:#fff;display:flex;align-items:flex-end;padding:14px;overflow:hidden}
+.cover[data-cat="projetos"]{background:#1b2e22}
+.cover[data-cat="metodologias"]{background:#2d5a3f}
+.cover[data-cat="ferramentas"]{background:#3b4a40}
+.cover[data-cat="planilhas"]{background:#4a5a2a}
+.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,transparent 0 22px,rgba(255,255,255,.05) 22px 23px)}
+.cover::after{content:"";position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:var(--dourado) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7v10l8-5z' fill='%231b2e22'/%3E%3C/svg%3E") center/26px no-repeat;opacity:.85;transition:opacity .15s}
+.cover[data-tipo="pdf"]::after{border-radius:0;width:46px;height:58px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 8h10M7 12h10M7 16h6' stroke='%2300522e' stroke-width='1.8'/%3E%3C/svg%3E") center/30px no-repeat;box-shadow:6px -6px 0 var(--dourado)}
+.cover[data-tipo="app"]::after{border-radius:0;width:64px;height:46px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 24'%3E%3Cpath d='M0 0h32v5H0z' fill='%2300522e'/%3E%3Cpath d='M6 19v-6M12 19V9M18 19v-8M24 19V8' stroke='%23c7a210' stroke-width='3'/%3E%3C/svg%3E") center/52px no-repeat}
+.cover .cat{position:relative;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;display:flex;gap:8px;align-items:center}
+.cover .cat::before{content:"";width:8px;height:8px;background:var(--dourado)}
+.cover .dur{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.55);font-size:12px;padding:2px 7px;font-variant-numeric:tabular-nums}
+.cover .seen{position:absolute;left:10px;top:10px;background:var(--dourado);color:#1b2e22;font-size:11px;font-weight:700;padding:2px 7px;letter-spacing:.06em}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.body h3{margin:0;font-size:18px;line-height:1.25;text-wrap:balance}
+.body p{margin:0;color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{margin-top:auto;padding-top:8px;font-size:12.5px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.meta .src{color:var(--accent-ink);font-weight:600}
+.empty{border:1px dashed var(--rule);padding:40px 24px;text-align:center;color:var(--muted);grid-column:1/-1;background:var(--tint)}
+.empty strong{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+.dlg{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:center;justify-content:center;z-index:20;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{background:var(--card);color:var(--ink);width:min(880px,100%);max-height:100%;overflow:auto;border-top:6px solid var(--dourado)}
+.panel .in{padding:22px 24px 24px;display:flex;flex-direction:column;gap:14px}
+.panel video{width:100%;display:block;background:#000;max-height:60vh}
+.pl{background:#000;display:flex;flex-direction:column}
+.pl-tela{position:relative;aspect-ratio:16/9;max-width:100%;max-height:60vh;margin:0 auto;width:100%}
+.pl-tela video{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain;cursor:pointer}
+.pl:fullscreen .pl-tela{max-height:none;flex:1}
+.pl-ctl{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0e1a13;color:#fff;font-variant-numeric:tabular-nums;font-size:13px}
+.pl-b{background:none;border:0;color:#fff;font-size:16px;cursor:pointer;width:32px;height:32px}
+.pl-b:focus-visible,.pl-ctl input:focus-visible{outline:2px solid var(--dourado)}
+#pseek{flex:1;min-width:0;accent-color:var(--dourado)}
+#pvol{width:70px;accent-color:var(--dourado)}
+@media (max-width:480px){#pvol{display:none}}
+.linkbox{aspect-ratio:16/9;max-width:100%;background:var(--verde);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
+.linkbox .t{font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.linkbox .h{font-size:13px;opacity:.8}
+.carregando{aspect-ratio:16/9;max-width:100%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;letter-spacing:.06em}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.close{margin-left:auto}
+form .f{display:flex;flex-direction:column;gap:5px}
+form label{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--muted)}
+form input,form select,form textarea{font:15px var(--f-sans);padding:9px 11px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);border-radius:0;width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+.hint{font-size:13px;color:var(--muted)}
+.err{color:var(--erro);font-size:14px;margin:0}
+.prog{height:6px;background:var(--rule)}
+.prog i{display:block;height:100%;width:0;background:var(--dourado);transition:width .2s}
+footer{background:#ffffff;border-top:1px solid var(--rule)}
+footer .wrap{padding-block:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{height:46px;width:auto;max-width:70%;display:block}
+.topo-tag{font:600 12px var(--f-sans);letter-spacing:.14em;text-transform:uppercase;color:#56645b}
+@media (max-width:480px){.logo{height:34px}.topo-tag{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<main class="entrada" id="entrada">
+  <div class="cartao"><form class="in" id="fl" autocomplete="on">
+    <img class="logo-e" src="logo.png" alt="Aprosoja — Sistema Famasul | Mato Grosso do Sul">
+    <h1>Acervo Aprosoja/MS</h1>
+    <p class="sub">Vídeos, manuais, ferramentas e planilhas da equipe. Entre com seu login e senha.</p>
+    <div><label for="login">Login</label><input id="login" autocomplete="username" autocapitalize="characters" required></div>
+    <div><label for="senha">Senha</label><div class="senha-l"><input id="senha" type="password" autocomplete="current-password" required><button class="ver" type="button" aria-pressed="false">Mostrar</button></div></div>
+    <p class="msg" id="msg" role="status"></p>
+    <button class="btn btn-green" id="entrar" type="submit" disabled>Entrar</button>
+    <p class="nota">O acervo é aberto no seu navegador. Login e senha não são enviados pela rede.</p>
+  </form></div>
+  <p class="rodape">Aprosoja/MS · uso interno</p>
+</main>
+
+<div id="app" hidden>
+<header><div class="wrap">
+  <div>
+    <div class="sig">ACERVO</div>
+    <h1>Acervo Aprosoja/MS</h1>
+    <p class="lede">Vídeos, manuais, ferramentas e planilhas sobre a instituição, os projetos, as metodologias e as ferramentas da Aprosoja/MS, reunidos para consulta de toda a equipe.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+  <div class="acoes"><span class="perfil" id="perfil"></span><button class="btn btn-gold" id="addBtn" hidden>+ Adicionar</button><button class="btn btn-ghost" id="sair">Sair</button></div>
+</div></header>
+<main class="wrap">
+  <div class="tools">
+    <div class="chips" id="chips" role="toolbar" aria-label="Categorias"></div>
+    <input class="search" id="q" type="search" placeholder="Buscar por título, tema ou palestrante" aria-label="Buscar no acervo">
+  </div>
+  <div id="list"></div>
+</main>
+<footer><div class="wrap"><img class="logo" src="logo.png" alt="Aprosoja — Sistema Famasul | Mato Grosso do Sul"><span class="topo-tag">Acervo interno · uso interno</span></div></footer>
+</div>
+
+<div class="dlg" id="dlg" hidden role="dialog" aria-modal="true"><div class="panel" id="panel"></div></div>
+
+<script>
+// Repositório onde a página grava os anexos do perfil interno.
+const REPO="coordtecnico/ACERVO-APROSOJA-MS", RAMO="main", PEDACO=15*1024*1024, MAX_ARQ=200*1024*1024;
+const CATS=[
+  {id:"instituicao",nome:"Instituição",desc:"História, estrutura, posicionamentos e atuação da Aprosoja/MS."},
+  {id:"projetos",nome:"Projetos",desc:"Apresentações e resultados dos projetos técnicos em andamento."},
+  {id:"metodologias",nome:"Metodologias",desc:"Protocolos, procedimentos e formas de trabalho das equipes."},
+  {id:"ferramentas",nome:"Ferramentas e sistemas",desc:"SIGA-MS, painéis, aplicativos e formulários usados pela equipe."},
+  {id:"planilhas",nome:"Planilhas semanais",desc:"Planilhas para preenchimento semanal pela equipe de campo."}
+];
+const catNome=id=>(CATS.find(c=>c.id===id)||{nome:"Outros"}).nome;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let itens=[],filtro="todos",busca="",K=null,TOKEN=null,interno=false;
+let vistos={};try{vistos=JSON.parse(localStorage.getItem("vistos")||"{}")}catch(e){}
+const marcar=id=>{vistos[id]=1;try{localStorage.setItem("vistos",JSON.stringify(vistos))}catch(e){}};
+
+// ---------- cifra ----------
+const bytes=t=>{const s=atob(t),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u};
+const blobB64=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=no;r.readAsDataURL(b)});
+async function decifra(buf){const u=new Uint8Array(buf);return crypto.subtle.decrypt({name:"AES-GCM",iv:u.slice(0,12)},K,u.slice(12))}
+async function cifra(buf){const iv=crypto.getRandomValues(new Uint8Array(12));const c=await crypto.subtle.encrypt({name:"AES-GCM",iv},K,buf);const o=new Uint8Array(12+c.byteLength);o.set(iv);o.set(new Uint8Array(c),12);return o}
+const gunzip=async b=>new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+const gzip=async b=>new Response(new Blob([b]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer();
+
+// ---------- entrada ----------
+(function(){
+  const f=$("#fl"),bt=$("#entrar"),msg=$("#msg"),inp=$("#senha"),ver=f.querySelector(".ver");
+  ver.onclick=()=>{const m=inp.type==="password";inp.type=m?"text":"password";ver.textContent=m?"Ocultar":"Mostrar";ver.setAttribute("aria-pressed",m);inp.focus()};
+  if(!window.crypto?.subtle||!window.DecompressionStream){msg.textContent="Este navegador não abre o acervo protegido. Use uma versão recente do Chrome, Edge, Firefox ou Safari.";return}
+  let A=null;
+  fetch("acessos.json",{cache:"no-store"}).then(r=>r.json()).then(j=>{A=j;bt.disabled=false}).catch(()=>{msg.textContent="Não foi possível carregar o acervo. Verifique a internet e recarregue a página."});
+  f.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const login=$("#login").value.trim().toUpperCase();
+    if(!login||!inp.value){msg.textContent="Informe o login e a senha.";return}
+    bt.disabled=true;msg.className="msg ok";msg.textContent="Verificando o acesso…";
+    let carga=null;
+    try{
+      const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(login+"\u0000"+inp.value),"PBKDF2",false,["deriveKey"]);
+      const kek=await crypto.subtle.deriveKey({name:"PBKDF2",salt:bytes(A.sal),iterations:A.iter,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+      for(const [iv,ct] of A.acessos){try{carga=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:bytes(iv)},kek,bytes(ct))));break}catch(x){}}
+    }catch(x){carga=null}
+    if(!carga){bt.disabled=false;msg.className="msg";msg.textContent="Login ou senha incorretos. Tente novamente.";inp.select();return}
+    inp.value="";msg.textContent="Abrindo o acervo…";
+    K=await crypto.subtle.importKey("raw",bytes(carga.k),{name:"AES-GCM"},false,["encrypt","decrypt"]);
+    interno=carga.p==="interno";TOKEN=carga.t||null;
+    try{await carregaCatalogo()}catch(x){bt.disabled=false;msg.className="msg";msg.textContent="Não foi possível abrir o catálogo. Recarregue a página e tente de novo.";return}
+    $("#entrada").hidden=true;$("#app").hidden=false;
+    $("#perfil").textContent=interno?"Perfil interno":"Perfil campo";
+    $("#addBtn").hidden=!interno;
+    render();
+  });
+})();
+$("#sair").onclick=()=>location.reload();
+
+// ---------- GitHub (só perfil interno) ----------
+async function gh(caminho,opt={}){
+  const r=await fetch(`https://api.github.com/repos/${REPO}/${caminho}`,{...opt,headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28",...(opt.headers||{})}});
+  if(!r.ok&&r.status!==404)throw{code:"github",status:r.status,message:(await r.text()).slice(0,200)};
+  return r;
+}
+async function shaDe(caminho){const r=await gh(`contents/${caminho}?ref=${RAMO}`);return r.status===404?null:(await r.json()).sha}
+async function gravaGH(caminho,dados,msg){
+  const sha=await shaDe(caminho);
+  await gh(`contents/${caminho}`,{method:"PUT",body:JSON.stringify({message:msg,branch:RAMO,content:await blobB64(new Blob([dados])),...(sha?{sha}:{})})});
+}
+async function apagaGH(caminho,msg){const sha=await shaDe(caminho);if(sha)await gh(`contents/${caminho}`,{method:"DELETE",body:JSON.stringify({message:msg,branch:RAMO,sha})})}
+
+// ---------- catálogo ----------
+async function catalogoBruto(){
+  // o perfil interno lê direto do repositório, para ver na hora o que acabou de gravar; o campo lê do site publicado
+  if(TOKEN){try{const r=await gh(`contents/catalogo.bin?ref=${RAMO}`,{headers:{Accept:"application/vnd.github.raw"}});if(r.ok)return r.arrayBuffer()}catch(x){}}
+  const r=await fetch("catalogo.bin?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("catalogo");return r.arrayBuffer();
+}
+async function carregaCatalogo(){
+  const j=JSON.parse(new TextDecoder().decode(await gunzip(await decifra(await catalogoBruto()))));
+  itens=j.itens||[];
+}
+// relê o catálogo do repositório, aplica a mudança e grava; assim um anexo de outra pessoa não se perde
+async function alteraCatalogo(muda,msg){
+  await carregaCatalogo();
+  itens=muda(itens.slice());
+  const dados=await cifra(await gzip(new TextEncoder().encode(JSON.stringify({v:1,itens}))));
+  await gravaGH("catalogo.bin",dados,msg);
+}
+
+// ---------- arquivos cifrados ----------
+const urls=new Map();
+async function urlParte(parte,mime){
+  const chave=parte.arq.join("|");
+  if(!urls.has(chave))urls.set(chave,(async()=>{
+    const pedacos=[];
+    for(const a of parte.arq){const r=await fetch(a);if(!r.ok)throw new Error("arquivo");pedacos.push(await decifra(await r.arrayBuffer()))}
+    return URL.createObjectURL(new Blob(pedacos,{type:mime}));
+  })());
+  return urls.get(chave);
+}
+
+// ---------- lista ----------
+function fonte(v){if(v.tipo==="pdf")return"Manual em PDF";if(v.tipo==="app")return v.categoria==="planilhas"?"Planilha online":"Ferramenta online";if(v.partes?.length)return"Arquivo do acervo";try{const h=new URL(v.link).hostname.replace(/^www\./,"");if(h.includes("youtu"))return"YouTube";if(h.includes("drive.google"))return"Google Drive";if(h.includes("vimeo"))return"Vimeo";return h}catch(e){return"Link externo"}}
+function dataBR(s){if(!s)return"";const [y,m,d]=s.split("-");return d?`${d}/${m}/${y}`:s}
+function renderChips(){
+  const cont=id=>id==="todos"?itens.length:itens.filter(v=>v.categoria===id).length;
+  $("#chips").innerHTML=[{id:"todos",nome:"Todos"},...CATS].map(c=>`<button class="chip" data-c="${c.id}" aria-pressed="${filtro===c.id}">${esc(c.nome)} <span class="n">${cont(c.id)}</span></button>`).join("");
+}
+function card(v){
+  return `<button class="card" data-id="${esc(v.id)}">
+    <div class="cover" data-cat="${esc(v.categoria)}" data-tipo="${v.tipo==="pdf"||v.tipo==="app"?v.tipo:"video"}">
+      ${vistos[v.id]?'<span class="seen">VISTO</span>':""}
+      ${v.duracao?`<span class="dur">${esc(v.duracao)}</span>`:""}
+      <span class="cat">${esc(catNome(v.categoria))}</span>
+    </div>
+    <div class="body"><h3>${esc(v.titulo)}</h3>${v.descricao?`<p>${esc(v.descricao)}</p>`:""}
+      <div class="meta"><span class="src">${esc(fonte(v))}</span>${v.palestrante?`<span>${esc(v.palestrante)}</span>`:""}${v.data?`<span>${dataBR(v.data)}</span>`:""}</div>
+    </div></button>`;
+}
+function render(){
+  renderChips();
+  const n=f=>itens.filter(f).length,st=[[n(v=>v.tipo!=="pdf"&&v.tipo!=="app"),"vídeo","vídeos"],[n(v=>v.tipo==="pdf"),"manual","manuais"],[n(v=>v.tipo==="app"&&v.categoria!=="planilhas"),"ferramenta","ferramentas"],[n(v=>v.categoria==="planilhas"),"planilha","planilhas"]];
+  $("#stats").innerHTML=st.filter(s=>s[0]).map(s=>`<span><b>${s[0]}</b>${s[0]===1?s[1]:s[2]}</span>`).join("");
+  const q=busca.trim().toLowerCase();
+  const lista=itens.filter(v=>(filtro==="todos"||v.categoria===filtro)&&(!q||[v.titulo,v.descricao,v.palestrante,catNome(v.categoria)].join(" ").toLowerCase().includes(q)));
+  const grupos=filtro==="todos"&&!q?CATS.map(c=>({c,itens:lista.filter(v=>v.categoria===c.id)})).filter(g=>g.itens.length):[{c:filtro==="todos"?{nome:"Resultados",desc:""}:CATS.find(c=>c.id===filtro),itens:lista}];
+  $("#list").innerHTML=grupos.length?grupos.map(g=>`<div class="section-h"><h2>${esc(g.c.nome)}</h2><p>${esc(g.c.desc||"")}</p></div><div class="grid">${g.itens.length?g.itens.map(card).join(""):(q?`<div class="empty"><strong>Nada encontrado</strong>Tente outro termo ou categoria.</div>`:`<div class="empty"><strong>Nenhum item nesta categoria ainda</strong>${interno?"Use “+ Adicionar” para incluir o primeiro.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div>`)}</div>`).join("")
+    :`<div class="grid" style="margin-top:22px"><div class="empty"><strong>O acervo ainda está vazio</strong>${interno?"Use “+ Adicionar” para incluir o primeiro item.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div></div>`;
+}
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filtro=b.dataset.c;render()});
+$("#q").addEventListener("input",e=>{busca=e.target.value;render()});
+$("#list").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)abrir(c.dataset.id)});
+function fechar(){$("#dlg").hidden=true;$("#panel").innerHTML=""}
+$("#dlg").addEventListener("click",e=>{if(e.target.id==="dlg")fechar()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#dlg").hidden)fechar()});
+
+// ---------- item ----------
+function abrir(id){
+  const v=itens.find(x=>x.id===id);if(!v)return;
+  marcar(id);
+  const P=v.partes||[];
+  const midia=v.tipo==="app"?`<div class="linkbox"><div class="t">${esc(fonte(v))}</div><a class="btn btn-gold" href="${esc(v.link)}" target="_blank" rel="noopener">${v.categoria==="planilhas"?"Abrir para preencher":"Abrir a ferramenta"}</a><span class="h">${esc(v.link.replace(/^https:\/\//,"").replace(/\/$/,""))} · abre em uma nova aba</span></div>`
+    :v.tipo==="pdf"?`<div class="linkbox"><div class="t">Manual em PDF</div><button class="btn btn-gold" id="abrePdf">Abrir o manual</button><span class="h" id="pdfMsg">O documento abre em uma nova aba.</span></div>`
+    :P.length>1?`<div class="pl" id="pl"><div class="pl-tela"><video id="va" preload="metadata" playsinline></video><video id="vb" preload="none" playsinline hidden></video></div>
+      <div class="pl-ctl"><button class="pl-b" id="pbtn" aria-label="Reproduzir">▶</button><span class="pl-t" id="pt">0:00</span><input id="pseek" type="range" min="0" step="0.1" value="0" aria-label="Posição do vídeo"><span class="pl-t" id="ptot"></span><input id="pvol" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume"><button class="pl-b" id="pfs" aria-label="Tela cheia">⛶</button></div></div>`
+    :P.length?`<div id="v1" class="carregando">Abrindo o vídeo…</div>`
+    :`<div class="linkbox"><div class="t">${esc(fonte(v))}</div><a class="btn btn-gold" href="${esc(v.link)}" target="_blank" rel="noopener">▶ Assistir no ${esc(fonte(v))}</a><span class="h">O vídeo abre em uma nova aba.</span></div>`;
+  $("#panel").innerHTML=`${midia}<div class="in">
+    <div class="sig" style="color:var(--accent-ink)">${esc(catNome(v.categoria)).toUpperCase()}</div>
+    <h2 style="margin:0;font-size:24px;line-height:1.2">${esc(v.titulo)}</h2>
+    <div class="meta" style="padding:0">${v.palestrante?`<span>${esc(v.palestrante)}</span>`:""}${v.data?`<span>${dataBR(v.data)}</span>`:""}${v.duracao?`<span>${esc(v.duracao)}</span>`:""}</div>
+    ${v.descricao?`<p style="margin:0;white-space:pre-line">${esc(v.descricao)}</p>`:""}
+    <div class="row">${interno?`<button class="btn btn-line" id="ed">Editar</button><button class="btn btn-line" id="del">Remover</button>`:""}<button class="btn btn-green close" id="fx">Fechar</button></div>
+    <div id="confirm"></div></div>`;
+  $("#dlg").hidden=false;$("#fx").focus();
+  $("#fx").onclick=fechar;
+  if(v.tipo==="pdf"){$("#abrePdf").onclick=async()=>{
+    const w=window.open("","_blank");$("#pdfMsg").textContent="Abrindo o documento…";
+    try{const u=await urlParte(P[0],"application/pdf");if(w)w.location=u;else location.href=u;$("#pdfMsg").textContent="O documento abriu em uma nova aba."}
+    catch(x){if(w)w.close();$("#pdfMsg").textContent="Não foi possível abrir o documento. Tente de novo."}
+  }}
+  else if(P.length>1)playerContinuo(P,v.mime||"video/mp4");
+  else if(P.length)urlParte(P[0],v.mime||"video/mp4").then(u=>{const el=$("#v1");if(el)el.outerHTML=`<video controls autoplay playsinline src="${u}"></video>`}).catch(()=>{const el=$("#v1");if(el)el.textContent="Não foi possível abrir o vídeo."});
+  if(interno){
+    $("#ed").onclick=()=>form(v);
+    $("#del").onclick=()=>{$("#confirm").innerHTML=`<div class="row" style="background:var(--tint);padding:12px"><span>Remover “${esc(v.titulo)}” do acervo?</span><button class="btn btn-green" id="sim">Remover</button><button class="btn btn-line" id="nao">Cancelar</button></div>`;
+      $("#nao").onclick=()=>$("#confirm").innerHTML="";
+      $("#sim").onclick=async()=>{const b=$("#sim");b.disabled=true;b.textContent="Removendo…";
+        try{await alteraCatalogo(l=>l.filter(x=>x.id!==v.id),`Remove ${v.titulo}`);
+          for(const p of P)for(const a of p.arq)await apagaGH(a,`Remove arquivo de ${v.titulo}`).catch(()=>{});
+          fechar();render();}
+        catch(e){$("#confirm").innerHTML=`<p class="err">Não foi possível remover (${esc(e.status||e.code||"erro")}). Tente de novo.</p>`}}};
+  }
+}
+
+// Toca as partes como um único vídeo: uma barra de tempo total, a próxima parte decifrada antes de a atual acabar.
+function playerContinuo(P,mime){
+  const D=P.map(p=>p.dur||0);
+  const src=i=>urlParte(P[i],mime);
+  const ini=D.map((_,i)=>D.slice(0,i).reduce((a,b)=>a+b,0)),tot=D.reduce((a,b)=>a+b,0);
+  const fmt=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=String(s%60).padStart(2,"0");return h?`${h}:${String(m).padStart(2,"0")}:${x}`:`${m}:${x}`};
+  let at=$("#va"),res=$("#vb"),cur=0,resIdx=-1,arrastando=false,tocando=false;
+  const seek=$("#pseek"),btn=$("#pbtn");
+  seek.max=tot;$("#ptot").textContent=fmt(tot);
+  src(0).then(u=>{at.src=u});
+  const estadoBtn=()=>{btn.textContent=tocando?"❚❚":"▶";btn.setAttribute("aria-label",tocando?"Pausar":"Reproduzir")};
+  const trocar=async(i,t,play)=>{
+    if(resIdx===i){[at,res]=[res,at];at.hidden=false;res.hidden=true;res.ontimeupdate=res.onended=res.onplay=res.onpause=res.onclick=null;res.pause()}else{at.src=await src(i)}
+    cur=i;resIdx=-1;at.volume=+$("#pvol").value;
+    const go=()=>{try{at.currentTime=t}catch(e){}if(play)at.play().catch(()=>{})};
+    at.readyState>=1?go():at.addEventListener("loadedmetadata",go,{once:true});
+    ligar();
+  };
+  function ligar(){
+    at.ontimeupdate=()=>{
+      const g=ini[cur]+at.currentTime;if(!arrastando)seek.value=g;$("#pt").textContent=fmt(g);
+      if(cur<P.length-1&&resIdx!==cur+1&&at.duration-at.currentTime<30){resIdx=cur+1;const r=res;src(cur+1).then(u=>{r.preload="auto";r.src=u;r.load()})}
+    };
+    at.onended=()=>{if(cur<P.length-1)trocar(cur+1,0,true);else{tocando=false;estadoBtn()}};
+    at.onplay=()=>{tocando=true;estadoBtn()};at.onpause=()=>{if(!at.ended){tocando=false;estadoBtn()}};
+    at.onclick=()=>btn.click();
+  }
+  ligar();
+  btn.onclick=()=>{at.paused?at.play().catch(()=>{}):at.pause()};
+  seek.oninput=()=>{arrastando=true;$("#pt").textContent=fmt(+seek.value)};
+  seek.onchange=()=>{arrastando=false;const g=+seek.value;let i=ini.findIndex((s,k)=>g<s+D[k]);if(i<0)i=P.length-1;
+    if(i===cur){at.currentTime=g-ini[i]}else trocar(i,g-ini[i],tocando)};
+  $("#pvol").oninput=e=>{at.volume=+e.target.value};
+  $("#pfs").onclick=()=>{const el=$("#pl");(document.fullscreenElement?document.exitFullscreen():el.requestFullscreen?.())?.catch?.(()=>{})};
+}
+
+// ---------- anexar (perfil interno) ----------
+const duracaoDe=arq=>new Promise(ok=>{const el=document.createElement("video");el.preload="metadata";el.onloadedmetadata=()=>{ok(el.duration||0);URL.revokeObjectURL(el.src)};el.onerror=()=>ok(0);el.src=URL.createObjectURL(arq)});
+const mmss=s=>{s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=String(s%60).padStart(2,"0");return h?`${h}:${String(m).padStart(2,"0")}:${x}`:`${m}:${x}`};
+const novoId=()=>Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,"0")).join("");
+
+function form(v){
+  v=v||{};
+  const tipoAtual=v.tipo||"";
+  $("#panel").innerHTML=`<form class="in" id="fm">
+    <div class="row"><h2 style="margin:0;font-size:22px">${v.id?"Editar item":"Adicionar ao acervo"}</h2></div>
+    <div class="f"><label for="f-titulo">Título</label><input id="f-titulo" required maxlength="140" value="${esc(v.titulo)}"></div>
+    <div class="two">
+      <div class="f"><label for="f-cat">Categoria</label><select id="f-cat">${CATS.map(c=>`<option value="${c.id}" ${v.categoria===c.id?"selected":""}>${c.nome}</option>`).join("")}</select></div>
+      <div class="f"><label for="f-tipo">Tipo</label><select id="f-tipo">
+        <option value="video" ${tipoAtual==="video"||!tipoAtual?"selected":""}>Vídeo</option>
+        <option value="pdf" ${tipoAtual==="pdf"?"selected":""}>Manual em PDF</option>
+        <option value="app" ${tipoAtual==="app"?"selected":""}>Ferramenta ou planilha (link)</option></select></div>
+    </div>
+    <div class="f"><label for="f-desc">Descrição</label><textarea id="f-desc" rows="3" maxlength="1200">${esc(v.descricao)}</textarea></div>
+    <div class="two">
+      <div class="f"><label for="f-pal">Palestrante / responsável</label><input id="f-pal" maxlength="80" value="${esc(v.palestrante)}"></div>
+      <div class="f"><label for="f-data">Data</label><input id="f-data" type="date" value="${esc(v.data)}"></div>
+    </div>
+    <div class="f"><label for="f-link">Link (YouTube, Drive, Vimeo, ferramenta ou planilha)</label><input id="f-link" type="url" placeholder="https://" value="${esc(v.link)}"></div>
+    <div class="f"><label for="f-arq">ou anexe o arquivo (vídeo MP4 ou PDF, até 200 MB)</label><input id="f-arq" type="file" accept="video/mp4,video/webm,application/pdf">
+      <span class="hint">${v.partes?.length?"Já há um arquivo anexado; escolha outro só para substituir.":"O arquivo é cifrado no seu navegador antes de ir para o GitHub. Vídeos acima de 200 MB: comprima antes ou use um link."}</span></div>
+    <div class="prog" id="prog" hidden><i></i></div>
+    <p class="err" id="ferr" role="status"></p>
+    <div class="row"><button class="btn btn-green" id="salvar" type="submit">Salvar</button><button class="btn btn-line" type="button" id="cancel">Cancelar</button></div>
+  </form>`;
+  $("#dlg").hidden=false;$("#f-titulo").focus();
+  $("#cancel").onclick=fechar;
+  $("#f-arq").onchange=e=>{const a=e.target.files[0];if(a)$("#f-tipo").value=a.type==="application/pdf"?"pdf":"video"};
+  $("#fm").addEventListener("submit",async e=>{
+    e.preventDefault();const err=$("#ferr");err.className="err";err.textContent="";
+    const link=$("#f-link").value.trim(),arq=$("#f-arq").files[0],tipo=$("#f-tipo").value;
+    if(!link&&!arq&&!v.partes?.length){err.textContent="Informe um link ou anexe um arquivo.";return}
+    if(link&&!/^https:\/\//i.test(link)){err.textContent="O link precisa começar com https://";return}
+    if(arq&&arq.size>MAX_ARQ){err.textContent="O arquivo passa de 200 MB. Comprima o vídeo ou publique no Drive/YouTube e cole o link.";return}
+    const b=$("#salvar");b.disabled=true;$("#cancel").disabled=true;
+    const titulo=$("#f-titulo").value.trim();
+    try{
+      let partes=link&&!arq?null:(v.partes||null),duracao=v.duracao||"",antigos=[];
+      if(arq){
+        const prog=$("#prog");prog.hidden=false;
+        const total=Math.ceil(arq.size/PEDACO),caminhos=[];
+        for(let i=0;i<total;i++){
+          b.textContent=`Enviando ${i+1} de ${total}…`;
+          const dados=await cifra(await arq.slice(i*PEDACO,(i+1)*PEDACO).arrayBuffer());
+          const c=`arquivos/${novoId()}.bin`;
+          await gravaGH(c,dados,`Anexa arquivo de ${titulo}`);
+          caminhos.push(c);prog.firstChild.style.width=((i+1)/total*100)+"%";
+        }
+        const dur=tipo==="video"?await duracaoDe(arq):0;
+        if(dur)duracao=mmss(dur);
+        antigos=(v.partes||[]).flatMap(p=>p.arq);
+        partes=[{arq:caminhos,dur}];
+      }
+      if(link&&!arq)antigos=(v.partes||[]).flatMap(p=>p.arq);
+      b.textContent="Salvando o catálogo…";
+      const item={id:v.id||novoId(),tipo:arq?(arq.type==="application/pdf"?"pdf":"video"):tipo,titulo,categoria:$("#f-cat").value,
+        descricao:$("#f-desc").value.trim(),palestrante:$("#f-pal").value.trim(),data:$("#f-data").value,duracao,
+        link:arq?"":link,mime:arq?(arq.type||"video/mp4"):(v.mime||""),partes,criado:v.criado||new Date().toISOString()};
+      await alteraCatalogo(l=>{const i=l.findIndex(x=>x.id===item.id);if(i>=0)l[i]=item;else l.unshift(item);return l},`${v.id?"Edita":"Adiciona"} ${titulo}`);
+      for(const a of antigos)await apagaGH(a,`Remove arquivo antigo de ${titulo}`).catch(()=>{});
+      fechar();render();
+    }catch(x){
+      b.disabled=false;$("#cancel").disabled=false;b.textContent="Salvar";
+      err.textContent=x.status===401||x.status===403?"O GitHub recusou a gravação: o token de acesso pode ter vencido. Peça para renovar o token do acervo.":`Não foi possível salvar (${esc(x.status||x.code||"erro")}). Tente de novo.`;
+    }
+  });
+}
+$("#addBtn").onclick=()=>form();
+</script>
+</body>
+</html>
