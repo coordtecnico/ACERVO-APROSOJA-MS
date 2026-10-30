@@ -86,6 +86,11 @@ header h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:700;marg
 .cover::after{content:"";position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:var(--dourado) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7v10l8-5z' fill='%231b2e22'/%3E%3C/svg%3E") center/26px no-repeat;opacity:.85;transition:opacity .15s}
 .cover[data-tipo="pdf"]::after{border-radius:0;width:46px;height:58px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 8h10M7 12h10M7 16h6' stroke='%2300522e' stroke-width='1.8'/%3E%3C/svg%3E") center/30px no-repeat;box-shadow:6px -6px 0 var(--dourado)}
 .cover[data-tipo="app"]::after{border-radius:0;width:64px;height:46px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 24'%3E%3Cpath d='M0 0h32v5H0z' fill='%2300522e'/%3E%3Cpath d='M6 19v-6M12 19V9M18 19v-8M24 19V8' stroke='%23c7a210' stroke-width='3'/%3E%3C/svg%3E") center/52px no-repeat}
+.cover[data-tipo="texto"]::after{border-radius:0;width:56px;height:56px;background:var(--dourado) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 7h12M6 11h12M6 15h8' stroke='%231b2e22' stroke-width='2'/%3E%3C/svg%3E") center/32px no-repeat}
+.texto{padding:26px 24px 4px;display:flex;flex-direction:column;gap:12px;max-width:72ch}
+.texto .resumo{font-size:18px;line-height:1.5;margin:0;padding:14px 16px;background:var(--tint);border-left:4px solid var(--dourado)}
+.texto h3{margin:10px 0 0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.texto p{margin:0;line-height:1.6}
 .cover .cat{position:relative;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;display:flex;gap:8px;align-items:center}
 .cover .cat::before{content:"";width:8px;height:8px;background:var(--dourado)}
 .cover .dur{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.55);font-size:12px;padding:2px 7px;font-variant-numeric:tabular-nums}
@@ -272,7 +277,7 @@ async function urlParte(parte,mime){
 }
 
 // ---------- lista ----------
-function fonte(v){if(v.tipo==="pdf")return"Manual em PDF";if(v.tipo==="app")return v.categoria==="planilhas"?"Planilha online":"Ferramenta online";if(v.partes?.length)return"Arquivo do acervo";try{const h=new URL(v.link).hostname.replace(/^www\./,"");if(h.includes("youtu"))return"YouTube";if(h.includes("drive.google"))return"Google Drive";if(h.includes("vimeo"))return"Vimeo";return h}catch(e){return"Link externo"}}
+function fonte(v){if(v.tipo==="texto")return"Principais pontos";if(v.tipo==="pdf")return"Manual em PDF";if(v.tipo==="app")return v.categoria==="planilhas"?"Planilha online":"Ferramenta online";if(v.partes?.length)return"Arquivo do acervo";try{const h=new URL(v.link).hostname.replace(/^www\./,"");if(h.includes("youtu"))return"YouTube";if(h.includes("drive.google"))return"Google Drive";if(h.includes("vimeo"))return"Vimeo";return h}catch(e){return"Link externo"}}
 function dataBR(s){if(!s)return"";const [y,m,d]=s.split("-");return d?`${d}/${m}/${y}`:s}
 function renderChips(){
   const cont=id=>id==="todos"?itens.length:itens.filter(v=>v.categoria===id).length;
@@ -280,7 +285,7 @@ function renderChips(){
 }
 function card(v){
   return `<button class="card" data-id="${esc(v.id)}">
-    <div class="cover" data-cat="${esc(v.categoria)}" data-tipo="${v.tipo==="pdf"||v.tipo==="app"?v.tipo:"video"}">
+    <div class="cover" data-cat="${esc(v.categoria)}" data-tipo="${["pdf","app","texto"].includes(v.tipo)?v.tipo:"video"}">
       ${vistos[v.id]?'<span class="seen">VISTO</span>':""}
       ${v.duracao?`<span class="dur">${esc(v.duracao)}</span>`:""}
       <span class="cat">${esc(catNome(v.categoria))}</span>
@@ -291,7 +296,7 @@ function card(v){
 }
 function render(){
   renderChips();
-  const n=f=>itens.filter(f).length,st=[[n(v=>v.tipo!=="pdf"&&v.tipo!=="app"),"vídeo","vídeos"],[n(v=>v.tipo==="pdf"),"manual","manuais"],[n(v=>v.tipo==="app"&&v.categoria!=="planilhas"),"ferramenta","ferramentas"],[n(v=>v.categoria==="planilhas"),"planilha","planilhas"]];
+  const n=f=>itens.filter(f).length,st=[[n(v=>!["pdf","app","texto"].includes(v.tipo)),"vídeo","vídeos"],[n(v=>v.tipo==="texto"),"resumo","resumos"],[n(v=>v.tipo==="pdf"),"manual","manuais"],[n(v=>v.tipo==="app"&&v.categoria!=="planilhas"),"ferramenta","ferramentas"],[n(v=>v.categoria==="planilhas"),"planilha","planilhas"]];
   $("#stats").innerHTML=st.filter(s=>s[0]).map(s=>`<span><b>${s[0]}</b>${s[0]===1?s[1]:s[2]}</span>`).join("");
   const q=busca.trim().toLowerCase();
   const lista=itens.filter(v=>(filtro==="todos"||v.categoria===filtro)&&(!q||[v.titulo,v.descricao,v.palestrante,catNome(v.categoria)].join(" ").toLowerCase().includes(q)));
@@ -311,7 +316,9 @@ function abrir(id){
   const v=itens.find(x=>x.id===id);if(!v)return;
   marcar(id);
   const P=v.partes||[];
-  const midia=v.tipo==="app"?`<div class="linkbox"><div class="t">${esc(fonte(v))}</div><a class="btn btn-gold" href="${esc(v.link)}" target="_blank" rel="noopener">${v.categoria==="planilhas"?"Abrir para preencher":"Abrir a ferramenta"}</a><span class="h">${esc(v.link.replace(/^https:\/\//,"").replace(/\/$/,""))} · abre em uma nova aba</span></div>`
+  // texto: linhas que terminam em ":" viram subtítulos; o resto, parágrafos
+  const midia=v.tipo==="texto"?`<div class="texto">${v.descricao?`<p class="resumo">${esc(v.descricao)}</p>`:""}${String(v.texto||"").split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>/:$/.test(l)?`<h3>${esc(l.slice(0,-1))}</h3>`:`<p>${esc(l)}</p>`).join("")}</div>`
+    :v.tipo==="app"?`<div class="linkbox"><div class="t">${esc(fonte(v))}</div><a class="btn btn-gold" href="${esc(v.link)}" target="_blank" rel="noopener">${v.categoria==="planilhas"?"Abrir para preencher":"Abrir a ferramenta"}</a><span class="h">${esc(v.link.replace(/^https:\/\//,"").replace(/\/$/,""))} · abre em uma nova aba</span></div>`
     :v.tipo==="pdf"?`<div class="linkbox"><div class="t">Manual em PDF</div><button class="btn btn-gold" id="abrePdf">Abrir o manual</button><span class="h" id="pdfMsg">O documento abre em uma nova aba.</span></div>`
     :P.length>1?`<div class="pl" id="pl"><div class="pl-tela"><video id="va" preload="metadata" playsinline></video><video id="vb" preload="none" playsinline hidden></video></div>
       <div class="pl-ctl"><button class="pl-b" id="pbtn" aria-label="Reproduzir">▶</button><span class="pl-t" id="pt">0:00</span><input id="pseek" type="range" min="0" step="0.1" value="0" aria-label="Posição do vídeo"><span class="pl-t" id="ptot"></span><input id="pvol" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume"><button class="pl-b" id="pfs" aria-label="Tela cheia">⛶</button></div></div>`
@@ -321,7 +328,7 @@ function abrir(id){
     <div class="sig" style="color:var(--accent-ink)">${esc(catNome(v.categoria)).toUpperCase()}</div>
     <h2 style="margin:0;font-size:24px;line-height:1.2">${esc(v.titulo)}</h2>
     <div class="meta" style="padding:0">${v.palestrante?`<span>${esc(v.palestrante)}</span>`:""}${v.data?`<span>${dataBR(v.data)}</span>`:""}${v.duracao?`<span>${esc(v.duracao)}</span>`:""}</div>
-    ${v.descricao?`<p style="margin:0;white-space:pre-line">${esc(v.descricao)}</p>`:""}
+    ${v.descricao&&v.tipo!=="texto"?`<p style="margin:0;white-space:pre-line">${esc(v.descricao)}</p>`:""}
     <div class="row">${interno&&TOKEN?`<button class="btn btn-line" id="ed">Editar</button><button class="btn btn-line" id="del">Remover</button>`:""}<button class="btn btn-green close" id="fx">Fechar</button></div>
     <div id="confirm"></div></div>`;
   $("#dlg").hidden=false;$("#fx").focus();
@@ -397,9 +404,11 @@ function form(v){
       <div class="f"><label for="f-tipo">Tipo</label><select id="f-tipo">
         <option value="video" ${tipoAtual==="video"||!tipoAtual?"selected":""}>Vídeo</option>
         <option value="pdf" ${tipoAtual==="pdf"?"selected":""}>Manual em PDF</option>
-        <option value="app" ${tipoAtual==="app"?"selected":""}>Ferramenta ou planilha (link)</option></select></div>
+        <option value="app" ${tipoAtual==="app"?"selected":""}>Ferramenta ou planilha (link)</option>
+        <option value="texto" ${tipoAtual==="texto"?"selected":""}>Texto (principais pontos)</option></select></div>
     </div>
-    <div class="f"><label for="f-desc">Descrição</label><textarea id="f-desc" rows="3" maxlength="1200">${esc(v.descricao)}</textarea></div>
+    <div class="f"><label for="f-desc">Descrição (no tipo Texto, é o resumo em destaque)</label><textarea id="f-desc" rows="3" maxlength="1200">${esc(v.descricao)}</textarea></div>
+    <div class="f"><label for="f-texto">Texto (só para o tipo Texto; linha terminada em “:” vira subtítulo)</label><textarea id="f-texto" rows="6" maxlength="20000">${esc(v.texto)}</textarea></div>
     <div class="two">
       <div class="f"><label for="f-pal">Palestrante / responsável</label><input id="f-pal" maxlength="80" value="${esc(v.palestrante)}"></div>
       <div class="f"><label for="f-data">Data</label><input id="f-data" type="date" value="${esc(v.data)}"></div>
@@ -417,7 +426,8 @@ function form(v){
   $("#fm").addEventListener("submit",async e=>{
     e.preventDefault();const err=$("#ferr");err.className="err";err.textContent="";
     const link=$("#f-link").value.trim(),arq=$("#f-arq").files[0],tipo=$("#f-tipo").value;
-    if(!link&&!arq&&!v.partes?.length){err.textContent="Informe um link ou anexe um arquivo.";return}
+    if(tipo==="texto"&&!$("#f-texto").value.trim()){err.textContent="Escreva o texto.";return}
+    if(tipo!=="texto"&&!link&&!arq&&!v.partes?.length){err.textContent="Informe um link ou anexe um arquivo.";return}
     if(link&&!/^https:\/\//i.test(link)){err.textContent="O link precisa começar com https://";return}
     if(arq&&arq.size>MAX_ARQ){err.textContent="O arquivo passa de 200 MB. Comprima o vídeo ou publique no Drive/YouTube e cole o link.";return}
     const b=$("#salvar");b.disabled=true;$("#cancel").disabled=true;
@@ -443,6 +453,7 @@ function form(v){
       b.textContent="Salvando o catálogo…";
       const item={id:v.id||novoId(),tipo:arq?(arq.type==="application/pdf"?"pdf":"video"):tipo,titulo,categoria:$("#f-cat").value,
         descricao:$("#f-desc").value.trim(),palestrante:$("#f-pal").value.trim(),data:$("#f-data").value,duracao,
+        texto:tipo==="texto"&&!arq?$("#f-texto").value.trim():"",
         link:arq?"":link,mime:arq?(arq.type||"video/mp4"):(v.mime||""),partes,criado:v.criado||new Date().toISOString()};
       await alteraCatalogo(l=>{const i=l.findIndex(x=>x.id===item.id);if(i>=0)l[i]=item;else l.unshift(item);return l},`${v.id?"Edita":"Adiciona"} ${titulo}`);
       for(const a of antigos)await apagaGH(a,`Remove arquivo antigo de ${titulo}`).catch(()=>{});
