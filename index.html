@@ -91,6 +91,7 @@ header h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:700;marg
 .texto .resumo{font-size:18px;line-height:1.5;margin:0;padding:14px 16px;background:var(--tint);border-left:4px solid var(--dourado)}
 .texto h3{margin:10px 0 0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
 .texto p{margin:0;line-height:1.6}
+.sob-texto{padding:22px 24px 10px}
 .cover .cat{position:relative;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;display:flex;gap:8px;align-items:center}
 .cover .cat::before{content:"";width:8px;height:8px;background:var(--dourado)}
 .cover .dur{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.55);font-size:12px;padding:2px 7px;font-variant-numeric:tabular-nums}
@@ -315,9 +316,13 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#dlg").hidden)f
 function abrir(id){
   const v=itens.find(x=>x.id===id);if(!v)return;
   marcar(id);
-  const P=v.partes||[];
+  // um texto pode ter um vídeo ligado (campo video): o vídeo toca logo abaixo do texto
+  const V=v.tipo==="texto"&&v.video?(itens.find(x=>x.id===v.video)||v):v;
+  const P=V.partes||[];
+  const videoAbaixo=V!==v&&P.length?`<div class="sob-texto"><div class="sig" style="color:var(--accent-ink)">VÍDEO · ${esc(V.titulo).toUpperCase()}${V.duracao?" · "+esc(V.duracao):""}</div></div>${P.length>1?`<div class="pl" id="pl"><div class="pl-tela"><video id="va" preload="metadata" playsinline></video><video id="vb" preload="none" playsinline hidden></video></div>
+      <div class="pl-ctl"><button class="pl-b" id="pbtn" aria-label="Reproduzir">▶</button><span class="pl-t" id="pt">0:00</span><input id="pseek" type="range" min="0" step="0.1" value="0" aria-label="Posição do vídeo"><span class="pl-t" id="ptot"></span><input id="pvol" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume"><button class="pl-b" id="pfs" aria-label="Tela cheia">⛶</button></div></div>`:`<div id="v1" class="carregando">Abrindo o vídeo…</div>`}`:"";
   // texto: linhas que terminam em ":" viram subtítulos; o resto, parágrafos
-  const midia=v.tipo==="texto"?`<div class="texto">${v.descricao?`<p class="resumo">${esc(v.descricao)}</p>`:""}${String(v.texto||"").split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>/:$/.test(l)?`<h3>${esc(l.slice(0,-1))}</h3>`:`<p>${esc(l)}</p>`).join("")}</div>`
+  const midia=v.tipo==="texto"?`<div class="texto">${v.descricao?`<p class="resumo">${esc(v.descricao)}</p>`:""}${String(v.texto||"").split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>/:$/.test(l)?`<h3>${esc(l.slice(0,-1))}</h3>`:`<p>${esc(l)}</p>`).join("")}</div>${videoAbaixo}`
     :v.tipo==="app"?`<div class="linkbox"><div class="t">${esc(fonte(v))}</div><a class="btn btn-gold" href="${esc(v.link)}" target="_blank" rel="noopener">${v.categoria==="planilhas"?"Abrir para preencher":"Abrir a ferramenta"}</a><span class="h">${esc(v.link.replace(/^https:\/\//,"").replace(/\/$/,""))} · abre em uma nova aba</span></div>`
     :v.tipo==="pdf"?`<div class="linkbox"><div class="t">Manual em PDF</div><button class="btn btn-gold" id="abrePdf">Abrir o manual</button><span class="h" id="pdfMsg">O documento abre em uma nova aba.</span></div>`
     :P.length>1?`<div class="pl" id="pl"><div class="pl-tela"><video id="va" preload="metadata" playsinline></video><video id="vb" preload="none" playsinline hidden></video></div>
@@ -338,8 +343,8 @@ function abrir(id){
     try{const u=await urlParte(P[0],"application/pdf");if(w)w.location=u;else location.href=u;$("#pdfMsg").textContent="O documento abriu em uma nova aba."}
     catch(x){if(w)w.close();$("#pdfMsg").textContent="Não foi possível abrir o documento. Tente de novo."}
   }}
-  else if(P.length>1)playerContinuo(P,v.mime||"video/mp4");
-  else if(P.length)urlParte(P[0],v.mime||"video/mp4").then(u=>{const el=$("#v1");if(el)el.outerHTML=`<video controls autoplay playsinline src="${u}"></video>`}).catch(()=>{const el=$("#v1");if(el)el.textContent="Não foi possível abrir o vídeo."});
+  else if(P.length>1)playerContinuo(P,V.mime||"video/mp4");
+  else if(P.length)urlParte(P[0],V.mime||"video/mp4").then(u=>{const el=$("#v1");if(el)el.outerHTML=`<video controls ${V===v?"autoplay":""} playsinline src="${u}"></video>`}).catch(()=>{const el=$("#v1");if(el)el.textContent="Não foi possível abrir o vídeo."});
   if(interno&&TOKEN){
     $("#ed").onclick=()=>form(v);
     $("#del").onclick=()=>{$("#confirm").innerHTML=`<div class="row" style="background:var(--tint);padding:12px"><span>Remover “${esc(v.titulo)}” do acervo?</span><button class="btn btn-green" id="sim">Remover</button><button class="btn btn-line" id="nao">Cancelar</button></div>`;
