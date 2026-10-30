@@ -92,6 +92,17 @@ header h1{font-size:clamp(28px,4.4vw,44px);line-height:1.08;font-weight:700;marg
 .texto h3{margin:10px 0 0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
 .texto p{margin:0;line-height:1.6}
 .sob-texto{padding:22px 24px 10px}
+.sobre{padding-bottom:10px}
+.bloco{background:var(--card);border:1px solid var(--rule);border-top:4px solid var(--verde);padding:20px 22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.bloco h2{margin:0;font-size:22px;line-height:1.2}
+.bloco .resumo{font-size:16.5px;line-height:1.55;margin:0;padding:12px 14px;background:var(--tint);border-left:4px solid var(--dourado)}
+.bloco .texto-corpo{display:flex;flex-direction:column;gap:8px}
+.bloco .texto-corpo h3{margin:6px 0 0;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.bloco .texto-corpo p{margin:0;line-height:1.6;font-size:15px}
+.bloco-inst{margin-bottom:22px}
+.bloco-inst .texto-corpo{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 26px}
+.blocos{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+@media (max-width:420px){.blocos{grid-template-columns:1fr}}
 .cover .cat{position:relative;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;display:flex;gap:8px;align-items:center}
 .cover .cat::before{content:"";width:8px;height:8px;background:var(--dourado)}
 .cover .dur{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.55);font-size:12px;padding:2px 7px;font-variant-numeric:tabular-nums}
@@ -167,6 +178,7 @@ footer .wrap{padding-block:22px 28px;display:flex;align-items:center;justify-con
   <div class="acoes"><span class="perfil" id="perfil"></span><button class="btn btn-gold" id="addBtn" hidden>+ Adicionar</button><button class="btn btn-ghost" id="sair">Sair</button></div>
 </div></header>
 <main class="wrap">
+  <section class="sobre" id="sobre" aria-label="Conheça a Aprosoja/MS e os projetos"></section>
   <div class="tools">
     <div class="chips" id="chips" role="toolbar" aria-label="Categorias"></div>
     <input class="search" id="q" type="search" placeholder="Buscar por título, tema ou palestrante" aria-label="Buscar no acervo">
@@ -281,7 +293,7 @@ async function urlParte(parte,mime){
 function fonte(v){if(v.tipo==="texto")return"Principais pontos";if(v.tipo==="pdf")return"Manual em PDF";if(v.tipo==="app")return v.categoria==="planilhas"?"Planilha online":"Ferramenta online";if(v.partes?.length)return"Arquivo do acervo";try{const h=new URL(v.link).hostname.replace(/^www\./,"");if(h.includes("youtu"))return"YouTube";if(h.includes("drive.google"))return"Google Drive";if(h.includes("vimeo"))return"Vimeo";return h}catch(e){return"Link externo"}}
 function dataBR(s){if(!s)return"";const [y,m,d]=s.split("-");return d?`${d}/${m}/${y}`:s}
 function renderChips(){
-  const cont=id=>id==="todos"?itens.length:itens.filter(v=>v.categoria===id).length;
+  const cont=id=>itens.filter(v=>v.tipo!=="texto"&&(id==="todos"||v.categoria===id)).length;
   $("#chips").innerHTML=[{id:"todos",nome:"Todos"},...CATS].map(c=>`<button class="chip" data-c="${c.id}" aria-pressed="${filtro===c.id}">${esc(c.nome)} <span class="n">${cont(c.id)}</span></button>`).join("");
 }
 function card(v){
@@ -297,10 +309,11 @@ function card(v){
 }
 function render(){
   renderChips();
-  const n=f=>itens.filter(f).length,st=[[n(v=>!["pdf","app","texto"].includes(v.tipo)),"vídeo","vídeos"],[n(v=>v.tipo==="texto"),"resumo","resumos"],[n(v=>v.tipo==="pdf"),"manual","manuais"],[n(v=>v.tipo==="app"&&v.categoria!=="planilhas"),"ferramenta","ferramentas"],[n(v=>v.categoria==="planilhas"),"planilha","planilhas"]];
+  const n=f=>itens.filter(f).length,st=[[n(v=>!["pdf","app","texto"].includes(v.tipo)),"vídeo","vídeos"],[n(v=>v.tipo==="pdf"),"manual","manuais"],[n(v=>v.tipo==="app"&&v.categoria!=="planilhas"),"ferramenta","ferramentas"],[n(v=>v.categoria==="planilhas"),"planilha","planilhas"]];
   $("#stats").innerHTML=st.filter(s=>s[0]).map(s=>`<span><b>${s[0]}</b>${s[0]===1?s[1]:s[2]}</span>`).join("");
   const q=busca.trim().toLowerCase();
-  const lista=itens.filter(v=>(filtro==="todos"||v.categoria===filtro)&&(!q||[v.titulo,v.descricao,v.palestrante,catNome(v.categoria)].join(" ").toLowerCase().includes(q)));
+  renderSobre();
+  const lista=itens.filter(v=>v.tipo!=="texto"&&(filtro==="todos"||v.categoria===filtro)&&(!q||[v.titulo,v.descricao,v.palestrante,catNome(v.categoria)].join(" ").toLowerCase().includes(q)));
   const grupos=filtro==="todos"&&!q?CATS.map(c=>({c,itens:lista.filter(v=>v.categoria===c.id)})).filter(g=>g.itens.length):[{c:filtro==="todos"?{nome:"Resultados",desc:""}:CATS.find(c=>c.id===filtro),itens:lista}];
   $("#list").innerHTML=grupos.length?grupos.map(g=>`<div class="section-h"><h2>${esc(g.c.nome)}</h2><p>${esc(g.c.desc||"")}</p></div><div class="grid">${g.itens.length?g.itens.map(card).join(""):(q?`<div class="empty"><strong>Nada encontrado</strong>Tente outro termo ou categoria.</div>`:`<div class="empty"><strong>Nenhum item nesta categoria ainda</strong>${interno&&TOKEN?"Use “+ Adicionar” para incluir o primeiro.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div>`)}</div>`).join("")
     :`<div class="grid" style="margin-top:22px"><div class="empty"><strong>O acervo ainda está vazio</strong>${interno&&TOKEN?"Use “+ Adicionar” para incluir o primeiro item.":"Os itens aparecem aqui assim que a equipe interna publicar."}</div></div>`;
@@ -308,6 +321,30 @@ function render(){
 $("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filtro=b.dataset.c;render()});
 $("#q").addEventListener("input",e=>{busca=e.target.value;render()});
 $("#list").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)abrir(c.dataset.id)});
+
+// Textos de apresentação abertos no topo do acervo; o vídeo de cada um abre no botão abaixo do texto.
+function paragrafos(t){return String(t||"").split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>/:$/.test(l)?`<h3>${esc(l.slice(0,-1))}</h3>`:`<p>${esc(l)}</p>`).join("")}
+function blocoSobre(v){
+  const vid=v.video&&itens.find(x=>x.id===v.video);
+  return `<article class="bloco${v.categoria==="instituicao"?" bloco-inst":""}">
+    <div class="sig" style="color:var(--accent-ink)">${esc(catNome(v.categoria)).toUpperCase()}</div>
+    <h2>${esc(v.titulo)}</h2>
+    ${v.descricao?`<p class="resumo">${esc(v.descricao)}</p>`:""}
+    <div class="texto-corpo">${paragrafos(v.texto)}</div>
+    <div class="row" style="margin-top:auto;padding-top:6px">${vid?`<button class="btn btn-green" data-video="${esc(vid.id)}">▶ Assistir ao vídeo${vid.duracao?` · ${esc(vid.duracao)}`:""}</button>`:""}${interno&&TOKEN?`<button class="btn btn-line" data-editar="${esc(v.id)}">Editar texto</button>`:""}</div>
+  </article>`;
+}
+function renderSobre(){
+  $("#sobre").hidden=filtro!=="todos"||!!busca.trim();
+  const T=itens.filter(v=>v.tipo==="texto");
+  const inst=T.filter(v=>v.categoria==="instituicao"),resto=T.filter(v=>v.categoria!=="instituicao");
+  $("#sobre").innerHTML=T.length?`<div class="section-h"><h2>Conheça a Aprosoja/MS e os projetos</h2><p>Leia os principais pontos e, para saber mais, assista ao vídeo de cada um.</p></div>
+    ${inst.map(blocoSobre).join("")}<div class="blocos">${resto.map(blocoSobre).join("")}</div>`:"";
+}
+$("#sobre").addEventListener("click",e=>{
+  const b=e.target.closest("[data-video]");if(b)return abrir(b.dataset.video);
+  const ed=e.target.closest("[data-editar]");if(ed)form(itens.find(x=>x.id===ed.dataset.editar));
+});
 function fechar(){$("#dlg").hidden=true;$("#panel").innerHTML=""}
 $("#dlg").addEventListener("click",e=>{if(e.target.id==="dlg")fechar()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#dlg").hidden)fechar()});
